@@ -1,4 +1,3 @@
-
 import discord    
 from discord.ext import commands
 from time_table import get_schedule
