@@ -64,7 +64,7 @@ def get_schedule(name_of_group):
         if len(lessons_of_today[i]) > 1: 
             schedule_for_today.append(time_table[i] + ' -- ' + lessons_of_today[i])
 
-    if len(schedule_for_today): #проверка на длину массива
+    if len(schedule_for_today) == 0: #проверка на длину массива
         return "Выходной"
 
     return schedule_for_today
