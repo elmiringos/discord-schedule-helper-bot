@@ -32,7 +32,6 @@ async def on_member_join(ctx, member): #навзвание "on_member_join" об
     await ctx.send(f'Nickname was changed for {member.mention} ') 
 
 
-
 def check_audience(ctx): #функция для проверки количества отсутсвующих
     channel = client.get_channel(962426692796825621) #находим нужный голосовой канал по id
     members_of_channel = channel.members #получаем количество пользователей, находящихся в голосовом канале
