@@ -80,9 +80,9 @@ async def menu(ctx): #функция для использваония меню
             await response.respond(content = "Напишите количество сообщений для удаления") #Спрашиваем у пользователя сколько сообщений нужно удалить
             amount = await client.wait_for('message', check = lambda m: m.channel == ctx.channel and m.author.id == ctx.author.id) #получаем число из чата
             await clear(ctx, int(amount.content)) #Используя функцию, удаляем сообения в чате
-        elif response.component.label == "Количество отсутствующих":
-            answer = check_audience(ctx)
-            await response.respond(content = answer)
+        elif response.component.label == "Количество отсутствующих": 
+            answer = check_audience(ctx) #вызываем функция для проверки количества отсутсвующих
+            await response.respond(content = answer) #выводим количества отсутсвующих в личное сообщение
 
     
 token = os.getenv("DISCORD_TOKEN") #из переменной окружения берем токен
