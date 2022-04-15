@@ -14,31 +14,34 @@ load_dotenv()
 client = commands.Bot(command_prefix='!') #Создаем тело бота и добавляем префик для наших команд
 
 
-@client.event #Создаем события, которая выполнеяет при каждом включении бота
-async def on_ready():
+@client.event #Создаем события
+async def on_ready(): #навзвание "on_ready" обозначает, что данная функция будет выполняться при каждом включении бота
     DiscordComponents(client) #Используем эту функцию, для добавления кнопок в бота
     print('We have logged in as {0.user}'.format(client)) #Чтобы отслеживать включение, добавляем эту строку
 
 
-@client.event
-async def on_member_join(ctx, member):
-    channel = client.get_channel(802427814154207255)
+@client.event #Создаем события
+async def on_member_join(ctx, member): #навзвание "on_member_join" обозначает, что данная функция будет выполняться при каждом заходе нового пользователя на сервер
+    channel = client.get_channel(802427814154207255) #находим нужный голосовой канал по id
+    role = ctx.guild.get_role(961990701741133834) #находим нужную роль
+    await member.add_roles(role) #добавляем роль новому пользователю
+    user_id = member.id #получаем id нового пользователя 
+    await user_id.send("Напишите свое имя и фамилию") #Спрашиваем Имя и Фамилию пользователя
+    new_nickname = await client.wait_for('message', check = lambda m: m.channel == ctx.channel and m.author.id == ctx.author.id) #получаем Имя и Фамилию пользователя
+    await member.edit(nick=new_nickname) #изменяем ник пользователю на  Имя и Фамилию 
+    await ctx.send(f'Nickname was changed for {member.mention} ') 
 
-    role = discord.utils.get(member.guild.roles, 961990701741133834)
-    await member.add_roles(role)
-    user_id = member.id
-    await user_id.send("Напишите свое имя и фамилию")
-    new_nickname = await client.wait_for('message', check = lambda m: m.channel == ctx.channel and m.author.id == ctx.author.id)
-    await member.edit(nick=new_nickname)
-    await ctx.send(f'Nickname was changed for {member.mention} ')
 
-async def check_audience(ctx):
-    channel = client.get_channel(962426692796825621)
-    members_of_channel = channel.members
-    role = get(ctx.guild.roles, id=961990701741133834)
-    members_of_guild = role.members
-    diff = len(members_of_guild) - len(members_of_guild)
-    await ctx.send(f"Количество отсутствующих {diff}, {len(members_of_guild)}, {len(members_of_guild)} ")
+
+def check_audience(ctx): #функция для проверки количества отсутсвующих
+    channel = client.get_channel(962426692796825621) #находим нужный голосовой канал по id
+    members_of_channel = channel.members #получаем количество пользователей, находящихся в голосовом канале
+    role = ctx.guild.get_role(961990701741133834) #находим нужную роль
+    members_of_guild = role.members #получаем количество пользователей нужной роли
+    if len(members_of_channel) == 0: # провереям количество пользователей, если =0, то просто выводим количество всей участников выбранной роли
+        return (f"Количество отсутствующих - {len(members_of_guild)}")
+    diff = len(members_of_guild) - (len(members_of_channel) - 1) #сохраняем в переменную "diff" количество отсутсвующих
+    return (f"Количество отсутствующих - {diff}") #возвращаем f строкой
 
 
 async def schedule(ctx, arg):  #Функция для распечатывания расписания. Получает на вход два аргумента,
@@ -79,8 +82,9 @@ async def menu(ctx): #функция для использваония меню
             amount = await client.wait_for('message', check = lambda m: m.channel == ctx.channel and m.author.id == ctx.author.id) #получаем число из чата
             await clear(ctx, int(amount.content)) #Используя функцию, удаляем сообения в чате
         elif response.component.label == "Количество отсутствующих":
-            await check_audience(ctx)
+            answer = check_audience(ctx)
+            await response.respond(content = answer)
 
     
-token = os.getenv("DISCORD_TOKEN") #из перменной окружения берем токен
+token = os.getenv("DISCORD_TOKEN") #из переменной окружения берем токен
 client.run(token) #запускаем бота
