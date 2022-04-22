@@ -24,7 +24,8 @@ def get_schedule(name_of_group):
     today = day + "." + month #преобразуем в удобный формат
     print(today) #для проверки выводим в консоль
 
-
+    if not name_of_group in schedule:
+        return "Такой группы не существует"
     group_schedule_href = schedule[name_of_group] #из json файла находим нужную ссылку на расписание
     req = requests.get(url = group_schedule_href, headers= headers) # создаем get запрос
     src = req.text #через метод text получаем html текст страницы
